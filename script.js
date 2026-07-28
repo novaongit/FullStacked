@@ -1,0 +1,1 @@
+document.getElementById('learnBtn').onclick=()=>alert('Welcome to Nova!');
