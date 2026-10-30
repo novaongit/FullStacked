@@ -1,0 +1,34 @@
+name: Static Website CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check Required Files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+
+      - name: Check JavaScript Syntax
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: node --check script.js
+
+      - name: Pipeline Completed
+        run: echo "Website validation successful!"
