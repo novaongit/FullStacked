@@ -1,0 +1,41 @@
+GitHub Guide
+
+Initialization
+git config --global user.name "name"
+git config --global user.email "Email"
+
+Download the Repo in Local PC
+git clone <Full Link for the Repo>
+
+To check Changes
+git status
+
+Sync Local with Updated Github Repo (GitHub To Local)
+git pull
+
+Push Changes From local to Github (Local To GitHub)
+git status
+git add .
+git commit -m "Message"
+git push
+
+For the Authentication, firstly we have to set the SSH for the Local to GitHub
+Create SSH Key
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+
+Start the SSH Agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+Get The Public Key to Copy and Paste While Creating New Github SSH
+cat ~/.ssh/id_ed25519.pub
+
+Test the Connection
+ssh -T git@github.com
+
+Changing the Repo from https to SSH(From the project folder)
+git remote set-url origin git@github.com:novaongit/FullStacked.git
+
+Check
+git remote -v
+
