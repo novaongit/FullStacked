@@ -76,4 +76,4 @@ jobs:
           ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
 
       - name: Deployment Completed
-        run: echo "Website deployed successfully!"name: Static Website CI
+        run: echo "Website deployed successfully!"
