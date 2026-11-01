@@ -1,4 +1,82 @@
-name: Static Website CI
+name: Static Website CI CD
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  # -----------------
+  # CI - VALIDATION
+  # -----------------
+
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check Required Files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check JavaScript Syntax
+        run: node --check script.js
+
+      - name: CI Completed
+        run: echo "Validation successful!"
+
+
+  # -----------------
+  # CD - DEPLOYMENT
+  # -----------------
+
+  deploy:
+    needs: validate
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+
+          printf '%s\n' "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy Website
+        run: |
+          rsync -avz --delete \
+          --exclude='.git/' \
+          --exclude='.github/' \
+          -e "ssh -i ~/.ssh/id_rsa" \
+          ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
+
+      - name: Deployment Completed
+        run: echo "Website deployed successfully!"name: Static Website CI
 
 on:
   push:
